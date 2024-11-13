@@ -1,21 +1,31 @@
 import React from 'react';
+import { Provider } from 'react-native-paper'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import LoginPage from './src/login';  // Make sure this path is correct
-import SignUpPage from './src/signup';  // Make sure this path is correct
+import { theme } from './src/core/theme'
+import LoginScreen from './src/screens/LoginScreen'
+import StartScreen from './src/screens/StartScreen'
+import SignupScreen from './src/screens/SignupScreen'
+import ResetScreen  from './src/screens/ResetScreen'
 
 const Stack = createStackNavigator();
 
-export default function App
-
-const App = () => {
+export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={LoginPage} />
-        <Stack.Screen name="SignUp" component={SignUpPage} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-};
-)]]
+    <Provider theme={theme}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="StartScreen"
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="StartScreen" component={StartScreen} />
+          <Stack.Screen name="LoginScreen" component={LoginScreen} />
+          <Stack.Screen name="SignupScreen" component={SignupScreen} />
+          <Stack.Screen name="ResetScreen" component={ResetScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
+  )
+}
