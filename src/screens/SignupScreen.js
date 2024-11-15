@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../componets/Background'
 import Logo from '../componets/Logo'
@@ -18,20 +17,46 @@ export default function SignupScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
 
-  const onSignUpPressed = () => {
+  const onSignUpPressed = async () => {
     const nameError = nameValidator(name.value)
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
+
     if (emailError || passwordError || nameError) {
       setName({ ...name, error: nameError })
       setEmail({ ...email, error: emailError })
       setPassword({ ...password, error: passwordError })
       return
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Dashboard' }],
-    })
+
+    try {
+      const response = await fetch('http://192.168.0.70:8000/api/signup/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          Name: name.value,
+          Email: email.value,
+          Password: password.value,
+        }),
+      })
+
+      if (response.ok) {
+        Alert.alert('Success', 'Account created successfully!')
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'LoginScreen' }],
+        })
+      } else {
+        const errorData = await response.json()
+        Alert.alert('Error', errorData.error || 'Failed to create account')
+      }
+    } catch (error) {
+      Alert.alert('Error', 'An error occurred. Please try again.')
+      console.error(error)
+    }
   }
 
   return (
@@ -96,5 +121,5 @@ const styles = StyleSheet.create({
   },
   down: {
     color: theme.colors.text,
-  }
+  },
 })
